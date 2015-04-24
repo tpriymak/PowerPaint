@@ -1,0 +1,24 @@
+package drawingpanel;
+
+import java.awt.geom.GeneralPath;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Stack;
+
+public class ShapeArchive
+{
+  private final List<Stack<GeneralPath>> my_shapes;
+  public ShapeArchive()
+  {
+    my_shapes = new ArrayList<Stack<GeneralPath>>();
+  }
+  public void add(Stack<GeneralPath> g)
+  {
+    my_shapes.add(g);
+  }
+  public List<Stack<GeneralPath>> getArchive()
+  {
+    return my_shapes;
+  }
+}

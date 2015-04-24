@@ -1,0 +1,7 @@
+package tools;
+
+public class ActionConstants
+{
+    private ActionConstants() { }
+    public static final String SELECTED_KEY = "actionConstants.selected";
+}

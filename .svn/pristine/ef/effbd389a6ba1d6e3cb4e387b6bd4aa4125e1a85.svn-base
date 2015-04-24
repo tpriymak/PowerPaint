@@ -1,0 +1,50 @@
+package tools;
+
+
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.JRadioButton;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JToggleButton;
+
+public class Ellipse
+{
+  private Action my_ell = new EllAction();
+  final JToggleButton ellBar;
+  final JRadioButtonMenuItem ellMenu;
+  
+  public Ellipse()
+  {
+    ellBar = new JToggleButton(my_ell);
+    ellMenu = new JRadioButtonMenuItem(my_ell);
+  }
+  public AbstractButton ellBarButton()
+  {
+    return ellBar;
+  }
+  public AbstractButton ellMenuButton()
+  {
+    return ellMenu;
+  }
+  private class EllAction extends AbstractAction
+  {
+    public EllAction()
+    {
+      super("Ellipse", new ImageIcon("ellipse_bw.gif"));
+      putValue(Action.MNEMONIC_KEY, KeyEvent.VK_E);
+      putValue(Action.SELECTED_KEY, false);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e)
+    {
+      // TODO Auto-generated method stub
+      
+    }
+  }
+}

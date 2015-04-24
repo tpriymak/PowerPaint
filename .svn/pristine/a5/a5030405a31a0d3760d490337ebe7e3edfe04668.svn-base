@@ -1,0 +1,49 @@
+package tools;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
+
+import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.JRadioButton;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JToggleButton;
+
+public class Rectangle
+{
+  private Action my_rect = new RectAction();
+  private JToggleButton rectBar;
+  private JRadioButtonMenuItem rectMenu;
+  public Rectangle()
+  {
+  rectBar = new JToggleButton(my_rect);
+  rectMenu = new JRadioButtonMenuItem(my_rect);
+  }
+  public AbstractButton rectBarButton()
+  {
+    return rectBar;
+  }
+  public AbstractButton rectMenuButton()
+  {
+    return rectMenu;
+  }
+private class RectAction extends AbstractAction
+{
+  public RectAction()
+  {
+    super("Rectangle", new ImageIcon("rectangle_bw.gif"));
+    putValue(Action.MNEMONIC_KEY, KeyEvent.VK_R);
+    putValue(Action.SELECTED_KEY, false);
+  }
+
+  @Override
+  public void actionPerformed(ActionEvent e)
+  {
+    // TODO Auto-generated method stub
+    
+  }
+}
+}

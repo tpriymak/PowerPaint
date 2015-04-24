@@ -1,0 +1,158 @@
+package main;
+import gui.ToolBar;
+import gui.ToolMenu;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import javax.swing.*;
+
+import drawingpanel.DrawingPanel;
+
+
+/**
+ * @author Timur Priymak
+ * @version 11/04 Sets up the main GUI.
+ */
+public class PaintSetup
+{
+  /**
+   * @field my_line String for line button.
+   */
+  private final static String my_line = "Line";
+  /**
+   * @field my_pencil String for pencil button.
+   */
+  private final static String my_pencil = "Pencil";
+  /**
+   * @field my_rect String for rectangle button.
+   */
+  private final static String my_rect = "Rectangle";
+  /**
+   * @field my_color String for Color button.
+   */
+  private final static String my_color = "Color...";
+  /**
+   * @field my_ell String for ellipse button.
+   */
+  private final static String my_ell = "Ellipse";
+  /**
+   * @field my_frame The main JFrame
+   */
+  private final JFrame my_frame = new JFrame("PowerPaint");
+  /**
+   * Sets up the JFrame and adds the components to it.
+   */
+  private final DrawingPanel panel = new DrawingPanel();
+  public void frameSetUp()
+  {
+    final JMenuBar bar = new JMenuBar();
+    //final DrawingPanel panel = new DrawingPanel();
+    final ToolBar toolbar = new ToolBar();
+    my_frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    bar.add(fileSetup());
+    bar.add(optionSetup());
+    bar.add(toolbar.toolSetup());
+    bar.add(helpSetup());
+    my_frame.add(panel);
+    my_frame.add(toolbar.toolBarSetup(), BorderLayout.SOUTH);
+    my_frame.setJMenuBar(bar);
+    my_frame.pack();
+    my_frame.setVisible(true);
+  }
+
+  /**
+   * Sets up the file JMenu.
+   * 
+   * @return file The file JMenu
+   */
+  private JMenu fileSetup()
+  {
+    final JMenu file = new JMenu("File");
+    final JMenuItem clear = new JMenuItem("Clear", KeyEvent.VK_C);
+    final JMenuItem quit = new JMenuItem("Quit", KeyEvent.VK_Q);
+    file.setMnemonic(KeyEvent.VK_F);
+    file.add(clear);
+    file.addSeparator();
+    file.add(quit);
+    return file;
+  }
+
+  /**
+   * Sets up the Option JMenu.
+   * 
+   * @return option The option JMenu
+   */
+  private JMenu optionSetup()
+  {
+    
+    final JMenu option = new JMenu("Options");
+    final JCheckBoxMenuItem grid = new JCheckBoxMenuItem("Grid");
+    grid.addActionListener(new GridAction());
+    final JMenu thick = new JMenu("Thickness");
+    final ButtonGroup group1 = new ButtonGroup();
+    final JRadioButtonMenuItem thick_1 = new JRadioButtonMenuItem("1");
+    thick_1.setMnemonic(KeyEvent.VK_1);
+    thick_1.addActionListener(new StrokeSelect(1));
+    final JRadioButtonMenuItem thick_2 = new JRadioButtonMenuItem("2");
+    thick_2.setMnemonic(KeyEvent.VK_2);
+    thick_2.addActionListener(new StrokeSelect(2));
+    final JRadioButtonMenuItem thick_4 = new JRadioButtonMenuItem("4");
+    thick_4.setMnemonic(KeyEvent.VK_4);
+    thick_4.addActionListener(new StrokeSelect(4));
+    option.setMnemonic(KeyEvent.VK_O);
+    thick.setMnemonic(KeyEvent.VK_T);
+    grid.setMnemonic(KeyEvent.VK_G);
+    thick.add(thick_1);
+    group1.add(thick_1);
+    group1.add(thick_2);
+    group1.add(thick_4);
+    thick.add(thick_2);
+    thick.add(thick_4);
+    option.add(grid);
+    option.add(thick);
+    return option;
+  }
+  private class GridAction implements ActionListener
+  {
+    public void actionPerformed(ActionEvent e)
+    {      
+      panel.drawGrid();
+    }
+  }
+  private class StrokeSelect implements ActionListener
+  {
+    private final int my_stroke;
+    public StrokeSelect(int s)
+    {
+      super();
+      my_stroke = s;
+      //putValue(Action.MNEMONIC_KEY, KeyEvent.VK_P);
+      //putValue(Action.SELECTED_KEY, false);
+    }
+    @Override
+    public void actionPerformed(ActionEvent e)
+    {
+      // TODO Auto-generated method stub
+      panel.setStroke(my_stroke);
+    }
+    
+  }
+  /**
+   * Sets up the help JMenu.
+   * 
+   * @return help The help JMenu
+   */
+  private JMenu helpSetup()
+  {
+    final JMenu help = new JMenu("Help");
+    help.setMnemonic(KeyEvent.VK_H);
+    final JMenuItem about = new JMenuItem("About...", KeyEvent.VK_A);
+    help.add(about);
+    return help;
+  }
+  public DrawingPanel getPanel()
+  {
+    return panel;
+  }
+}

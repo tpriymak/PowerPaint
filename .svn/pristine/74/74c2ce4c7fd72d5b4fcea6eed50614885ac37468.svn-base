@@ -1,0 +1,72 @@
+
+package gui;
+
+import java.awt.event.KeyEvent;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JMenu;
+import javax.swing.JToolBar;
+
+import tools.AbstractTool;
+import tools.ColorButton;
+import tools.Ellipse;
+import tools.Line;
+import tools.Pencil;
+import tools.Rectangle;
+
+public class ToolBar
+{
+  /**
+   * Sets up the JToolBar.
+   * 
+   * @return bar The JToolBar
+   */
+  private AbstractTool pencil = new Pencil();
+  private AbstractTool line = new Line();
+  private Rectangle rect = new Rectangle();
+  private Ellipse ell = new Ellipse();
+  private ColorButton color = new ColorButton();
+
+  public JToolBar toolBarSetup()
+  {
+    final JToolBar bar = new JToolBar();
+    
+    final ButtonGroup group = new ButtonGroup();
+    group.add(((Pencil) pencil).setupBarButton());
+    group.add(((Line) line).lineBarSetup());
+    group.add(rect.rectBarButton());
+    group.add(ell.ellBarButton());
+    bar.add(color.colorBarButton());
+    bar.add(((Pencil) pencil).setupBarButton());
+    bar.add(((Line) line).lineBarSetup());
+    bar.add(rect.rectBarButton());
+    bar.add(ell.ellBarButton());
+    return bar;
+  }
+
+  /**
+   * Sets up the Tool JMenu.
+   * 
+   * @return tool The tool JMenu
+   */
+  public JMenu toolSetup()
+  {
+    final JMenu tool = new JMenu("Tools");
+    tool.setMnemonic(KeyEvent.VK_T);
+    final ButtonGroup group = new ButtonGroup();
+    
+    tool.add(color.colorMenuButton());
+    tool.addSeparator();
+    group.add(((Pencil) pencil).setupMenuButton());
+    group.add(((Line) line).lineMenuSetup());
+    group.add(rect.rectMenuButton());
+    group.add(ell.ellMenuButton());
+    tool.add(color.colorMenuButton());
+    tool.add(((Pencil) pencil).setupMenuButton());
+    tool.add(((Line) line).lineMenuSetup());
+    tool.add(rect.rectMenuButton());
+    tool.add(ell.ellMenuButton());
+    return tool;
+  }
+
+}

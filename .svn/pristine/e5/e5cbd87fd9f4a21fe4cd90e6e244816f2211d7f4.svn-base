@@ -1,0 +1,61 @@
+package tools;
+
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JFileChooser;
+import javax.swing.JMenuItem;
+
+import main.PaintSetup;
+
+import drawingpanel.DrawingPanel;
+
+public class ColorButton
+{
+  private Action my_color_action = new ColorAction();
+  private JButton colorBar = new JButton("Color...");
+  private JMenuItem colorMenu = new JMenuItem("Color...");
+  private PaintSetup setup = new PaintSetup();
+  private DrawingPanel panel = setup.getPanel();
+  {
+    colorBar = new JButton(my_color_action);
+    colorMenu = new JMenuItem(my_color_action);
+  }
+  public AbstractButton colorBarButton()
+  {
+    colorBar.setMnemonic(KeyEvent.VK_C);
+    return colorBar;
+  }
+  public AbstractButton colorMenuButton()
+  {
+    colorMenu.setMnemonic(KeyEvent.VK_C);
+    return colorMenu;
+  }
+  //public Color getColor()
+  //{
+    //return my_current_color;
+  //}
+  private class ColorAction extends AbstractAction
+  {
+    private Color my_current_color;
+    public ColorAction()
+    {
+      super("Color...");
+    }
+    @Override
+    public void actionPerformed(ActionEvent e)
+    {
+      my_current_color = JColorChooser.showDialog(null, "Color Selector", null);
+      colorBar.setBackground(my_current_color);
+      panel.setColor(my_current_color);
+    }
+    
+  }
+}

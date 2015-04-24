@@ -1,0 +1,351 @@
+
+package drawingpanel;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.geom.GeneralPath;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+
+import javax.swing.JPanel;
+
+import tools.AbstractToolAction;
+
+/**
+ * @author Timur Priymak
+ * @version 11/04
+ */
+public class DrawingPanel extends JPanel
+{
+  /**
+   * @field serialVersionUID
+   */
+  private static final long serialVersionUID = 1L;
+  /**
+   * @field PREF_DIMENSION_X The preferred x-size for the drawing panel.
+   */
+  private static final int PREF_DIMENSION_X = 400;
+  /**
+   * @field PREF_DIMENSION_Y The preferred y-size for the drawing panel.
+   */
+  private static final int PREF_DIMENSION_Y = 300;
+  /**
+   * Length of the arrays.
+   */
+  private static final int LENGTH = 4;
+  /**
+   * Grid spacing.
+   */
+  private static final int GRID_SIZE = 10;
+  /**
+   * Number of clicks.
+   */
+  private static int clicks;
+  /**
+   * Determines whether to draw ellipses or rectangles.
+   */
+  public static int rect;
+  /**
+   * @field my_paths The stack of individual lines.
+   */
+  private static Stack<GeneralPath> my_paths = new Stack<GeneralPath>();
+  /**
+   * Array of points for Rectangles and Ellipses.
+   */
+  private static int[] my_points = new int[LENGTH];
+  /**
+   * Current color.
+   */
+  private static Color my_color = Color.BLACK;
+  /**
+   * Current stroke.
+   */
+  private int my_stroke = 1;
+  /**
+   * Current tool.
+   */
+  private static AbstractToolAction my_tool;
+  /**
+   * ArrayList of grid lines.
+   */
+  private final List<int[]> my_grid = new ArrayList<int[]>();
+  /**
+   * PointArchive object.
+   */
+  public static PointArchive my_point_archive = new PointArchive();
+  /**
+   * Shape archive object.
+   */
+  private static ShapeArchive my_archive = new ShapeArchive();
+  /**
+   * Array of points for the grid.
+   */
+  private final int[] my_grid_points = new int[LENGTH];
+
+  /**
+   * Initializes the preferred size of the panel, the background color and
+   * attaches motion and mouse listeners.
+   */
+  public DrawingPanel()
+  {
+    super();
+    setPreferredSize(new Dimension(PREF_DIMENSION_X, PREF_DIMENSION_Y));
+    setBackground(Color.WHITE);
+    addMouseListener(new MousePress());
+    addMouseListener(new MouseRelease());
+    addMouseMotionListener(new MouseDrag());
+    addMouseMotionListener(new RectPreview());
+  }
+
+  /**
+   * Returns number of clicks.
+   * 
+   * @return clicks
+   */
+  public int getClicks()
+  {
+    return clicks;
+  }
+
+  /**
+   * Sets the clicks back to 0.
+   */
+  public void setClicks()
+  {
+    my_paths.clear();
+    clicks = 0;
+  }
+
+  /**
+   * Sets whether to draw ellipses or rectangles.
+   * 
+   * @param the_rect Int for determining what shape to draw.
+   */
+  public void setRect(final int the_rect)
+  {
+    rect = the_rect;
+  }
+
+  /**
+   * Sets the archive.
+   * 
+   * @param the_archive Archive with shapes.
+   */
+  public void setArchive(final ShapeArchive the_archive)
+  {
+    my_archive = the_archive;
+  }
+
+  /**
+   * Sets the current tool.
+   * 
+   * @param the_tool The selected tool
+   */
+  public void setTool(final AbstractToolAction the_tool)
+  {
+    my_tool = the_tool;
+  }
+
+  /**
+   * Sets the current color.
+   * 
+   * @param the_c Selected color
+   */
+  public void setColor(final Color the_c)
+  {
+    my_color = the_c;
+  }
+
+  /**
+   * @param the_array Sets the array of points.
+   */
+  public void setRectArray(final int[] the_array)
+  {
+    my_points = the_array;
+    my_point_archive.add(my_points);
+  }
+
+  /**
+   * @param the_s Sets the current stroke.
+   */
+  public void setStroke(final int the_s)
+  {
+    my_stroke = the_s;
+  }
+
+  /**
+   * @param the_graphics The graphics component Paints on the drawing panel.
+   *          Draws the various shapes onto the board.
+   */
+
+  @Override
+  public void paintComponent(final Graphics the_graphics)
+  {
+    super.paintComponent(the_graphics);
+    Graphics2D g2d = (Graphics2D) the_graphics;
+    g2d = (Graphics2D) the_graphics;
+    g2d.setColor(my_color);
+    g2d.setStroke(new BasicStroke(my_stroke));
+    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+    for (Shape s : my_paths)
+    {
+      g2d.draw(s);
+    }
+    if (rect == 2)
+    {
+      g2d.drawRect(my_points[0], my_points[1], my_points[2], my_points[LENGTH - 1]);
+    }
+    else if (rect == 1)
+    {
+      g2d.drawOval(my_points[0], my_points[1], my_points[2], my_points[LENGTH - 1]);
+    }
+    for (int i = 0; i < my_grid.size(); i++)
+    {
+      g2d.drawLine(my_grid.get(i)[0], my_grid.get(i)[1], my_grid.get(i)[2],
+                   my_grid.get(i)[LENGTH - 1]);
+      System.out.println(my_grid.get(i)[1]);
+    }
+  }
+
+  /**
+   * @param the_path Sets the current path.
+   */
+  public void setPath(final Stack<GeneralPath> the_path)
+  {
+    my_paths = the_path;
+  }
+
+  /**
+   * Clears the panel.
+   */
+  public void clearPanel()
+  {
+    // Clears panel.
+  }
+
+  /**
+   * Gives points where to draw the grid.
+   */
+  public void drawGrid()
+  {
+    for (int i = 0; i <= (getWidth() / GRID_SIZE) + (getHeight() / GRID_SIZE); i++)
+    {
+      my_grid.add(my_grid_points);
+    }
+    int iter = 0;
+    for (int i = 0; i < getWidth(); i++)
+    {
+      if (i % GRID_SIZE == 0)
+      {
+        my_grid.get(iter)[0] = i;
+        my_grid.get(iter)[1] = 0;
+        my_grid.get(iter)[2] = i;
+        my_grid.get(iter)[LENGTH - 1] = getHeight();
+        iter++;
+        // g2d1.drawLine(i, 0, i, getHeight());
+      }
+    }
+    for (int j = 0; j < getHeight(); j++)
+    {
+      if (j % GRID_SIZE == 0)
+      {
+        my_grid.get(iter)[0] = 0;
+        my_grid.get(iter)[1] = j;
+        my_grid.get(iter)[2] = getWidth();
+        my_grid.get(iter)[LENGTH - 1] = j;
+        iter++;
+        // g2d1.drawLine(0, j, getWidth(), j);
+      }
+    }
+    repaint();
+  }
+
+  /**
+   * Notifys the tools of a mousePress.
+   */
+  private class MousePress extends MouseAdapter
+  {
+    @Override
+    public void mousePressed(final MouseEvent the_event)
+    {
+      my_tool.mousePressed(the_event);
+      clicks++;
+    }
+  }
+
+  /**
+   * Notifys the tools of a MouseRelease.
+   */
+  private class MouseRelease extends MouseAdapter
+  {
+    @Override
+    public void mouseReleased(final MouseEvent the_event)
+    {
+      my_tool.mouseReleased(the_event);
+      repaint();
+    }
+  }
+
+  /**
+   * Notifies the tools of a mouseDrag.
+   */
+  private class MouseDrag extends MouseMotionAdapter
+  {
+    @Override
+    public void mouseDragged(final MouseEvent the_event)
+    {
+      my_tool.mouseDragged(the_event);
+    }
+  }
+
+  /**
+   * Gives the preview of the rectangle of ellipse.
+   */
+  private class RectPreview extends MouseMotionAdapter
+  {
+    /**
+     * X at my_points[0].
+     */
+    private final int my_x = my_points[0];
+    /**
+     * Y at my_points[1].
+     */
+    private final int my_y = my_points[1];
+
+    @Override
+    public void mouseDragged(final MouseEvent the_event)
+    {
+      if (the_event.getX() - my_points[0] < 0 && the_event.getY() - my_points[1] < 0)
+      {
+        my_points[2] = my_x - the_event.getX();
+        my_points[LENGTH - 1] = my_y - the_event.getY();
+      }
+      else if (the_event.getX() - my_points[0] < 0)
+      {
+        my_points[2] = my_x - the_event.getX();
+        my_points[LENGTH - 1] = the_event.getY() - my_points[1];
+      }
+      else if (the_event.getY() - my_points[1] < 0)
+      {
+        my_points[2] = the_event.getX() - my_points[0];
+        my_points[LENGTH - 1] = my_y - the_event.getY();
+      }
+      else
+      {
+        my_points[2] = the_event.getX() - my_points[0];
+        my_points[LENGTH - 1] = the_event.getY() - my_points[1];
+      }
+      repaint();
+    }
+  }
+}

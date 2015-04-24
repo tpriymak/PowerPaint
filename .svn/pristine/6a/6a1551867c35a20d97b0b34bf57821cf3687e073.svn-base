@@ -1,0 +1,41 @@
+package drawingpanel;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author Timur Priymak
+ * @version 11/20
+ */
+public class PointArchive
+{
+  /**
+   * A list of arrays of points.
+   */
+  private List<int[]> my_shapes = new ArrayList<int[]>();
+  /**
+   * Adds an array to the list.
+   * @param the_points and array of points.
+   */
+  public void add(final int[] the_points)
+  {
+    my_shapes.add(the_points);
+  }
+  /**
+   * Returns an array at the index.
+   * @param the_index Index of list.
+   * @return my_shapes.get(the_index) Array at the index
+   */
+  public int[] get(final int the_index)
+  {
+    return my_shapes.get(the_index);
+  }
+  /**
+   * Returns the size of the list.
+   * @return my_shapes.size() The size of the list.
+   */
+  public int size()
+  {
+    return my_shapes.size();
+  }
+}

@@ -1,0 +1,48 @@
+package tools;
+
+
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JToggleButton;
+
+public class Line extends AbstractTool
+{
+  private Action my_line = new LineAction();
+  final JToggleButton lineBar;
+  final JRadioButtonMenuItem lineMenu;
+  public Line()
+  {
+    lineBar = new JToggleButton(my_line);
+    lineMenu = new JRadioButtonMenuItem(my_line);
+  }
+  public AbstractButton lineBarSetup()
+  {
+    return lineBar;
+  }
+  public AbstractButton lineMenuSetup()
+  {
+    return lineMenu;
+  }
+  private class LineAction extends AbstractAction
+  {
+    public LineAction()
+    {
+      super("Line", new ImageIcon("line_bw.gif"));
+      putValue(Action.MNEMONIC_KEY, KeyEvent.VK_L);
+      putValue(Action.SELECTED_KEY, false);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e)
+    {
+      // TODO Auto-generated method stub
+    }
+  }
+  
+}

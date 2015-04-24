@@ -1,0 +1,246 @@
+
+package drawingpanel;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Line2D;
+import java.util.Stack;
+
+import javax.swing.JPanel;
+
+import tools.ColorButton;
+import tools.AbstractTool;
+import tools.Line;
+import tools.Pencil;
+
+/**
+ * @author Timur Priymak
+ * @version 11/04
+ */
+public class DrawingPanel extends JPanel
+{
+  /**
+   * @field serialVersionUID
+   */
+  private static final long serialVersionUID = 1L;
+  /**
+   * @field PREF_DIMENSION_X The preferred x-size for the drawing panel.
+   */
+  private static final int PREF_DIMENSION_X = 400;
+  /**
+   * @field PREF_DIMENSION_Y The preferred y-size for the drawing panel.
+   */
+  private static final int PREF_DIMENSION_Y = 300;
+  /**
+   * @field mouse_clicks The amount of times the mouse is clicked
+   */
+  private static int mouse_clicks;
+  /**
+   * @field my_paths The stack of individual lines.
+   */
+  private GeneralPath g = new GeneralPath();
+  private final Stack<GeneralPath> my_paths = new Stack<GeneralPath>();
+  private final Stack<Line> my_grids = new Stack<Line>();
+  private static Color my_color = Color.BLACK;
+  private int my_stroke = 1;
+  private static final int GRID_SIZE = 10;
+  private final ShapeArchive my_archive = new ShapeArchive();
+
+  /**
+   * Initializes the preferred size of the panel, the background color and
+   * attaches motion and mouse listeners.
+   */
+  public DrawingPanel()
+  {
+    super();
+    setPreferredSize(new Dimension(PREF_DIMENSION_X, PREF_DIMENSION_Y));
+    setBackground(Color.WHITE);
+    addMouseMotionListener(new PencilAction());
+    addMouseListener(new Click());
+  }
+
+  public void setColor(Color c)
+  {
+    my_color = c;
+  }
+
+  public void setStroke(int s)
+  {
+    my_stroke = s;
+  }
+
+  /**
+   * @param the_graphics The graphics component Paints on the drawing panel.
+   */
+  public void attachPencilListener()
+  {
+    System.out.println("picked up");
+    addMouseMotionListener(new PencilAction());
+    addMouseListener(new Click());
+  }
+
+  @Override
+  public void paintComponent(final Graphics the_graphics)
+  {
+    super.paintComponent(the_graphics);
+    final Graphics2D g2d = (Graphics2D) the_graphics;
+    g2d.setColor(my_color);
+    g2d.setStroke(new BasicStroke(my_stroke));
+    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    for (Shape s : my_paths)
+    {
+      g2d.draw(s);
+    }
+  }
+
+  public void drawGrid()
+  {
+    final Graphics g2 = getGraphics();
+    super.paintComponent(g2);
+    final Graphics2D g2d = (Graphics2D) g2;
+    g2d.setStroke(new BasicStroke(1));
+    g2d.setColor(Color.BLACK);
+    for (int i = 0; i < getWidth(); i++)
+    {
+      if (i % GRID_SIZE == 0)
+      {
+        g2d.drawLine(i, 0, i, getHeight());
+      }
+    }
+    for (int j = 0; j < getHeight(); j++)
+    {
+      if (j % GRID_SIZE == 0)
+      {
+        g2d.drawLine(0, j, getWidth(), j);
+      }
+    }
+    repaint();
+  }
+
+  /**
+   * 
+   * @author Timur Priymak Inner class to pick up mouse presses.
+   */
+  private class Click extends MouseAdapter
+  {
+    /**
+     * @param the_event A mouse press Adds 1 to mouse_clicks every time the
+     *          mouse is clicked and clears the original my_paths.
+     */
+    @Override
+    public void mousePressed(final MouseEvent the_event)
+    {
+      mouse_clicks++;
+      if (mouse_clicks > 0)
+      {
+        //my_archive.add(my_paths);
+        my_paths.clear();
+        mouse_clicks = 0;
+      }
+    }
+  }
+
+  /**
+   * @author Timur Priymak Responds to a dragged mouse and generates new paths.
+   */
+  private class RectangleAction extends MouseMotionAdapter
+  {
+    public void mouseDragged(final MouseEvent the_event)
+    {
+      // System.err.println(the_event);
+      if (my_paths.isEmpty())
+      {
+        final GeneralPath g = new GeneralPath();
+        // g.moveTo(the_event.getX(), mouse_y);
+        // g.moveTo(mouse_x, the_event.getY());
+        // g.moveTo(the_event.getX(), the_event.getY());
+        my_paths.push(g);
+      }
+      else
+      {
+        my_paths.peek().lineTo(the_event.getX(), the_event.getY());
+        repaint();
+      }
+    }
+  }
+
+  private class LineAction extends MouseAdapter
+  {
+    @Override
+    public void mouseClicked(final MouseEvent the_event)
+    {
+      System.err.println(the_event);
+      if (my_paths.isEmpty())
+      {
+        final GeneralPath g = new GeneralPath();
+        g.moveTo(the_event.getX(), the_event.getY());
+        my_paths.push(g);
+      }
+      else
+      {
+        my_paths.peek().lineTo(the_event.getX(), the_event.getY());
+        repaint();
+      }
+    }
+  }
+
+  private class PencilAction extends MouseMotionAdapter
+  {
+    /**
+     * Responds to a mouse being dragged.
+     * 
+     * @param the_event The mouse event.
+     */
+    @Override
+    public void mouseDragged(final MouseEvent the_event)
+    {
+      // System.err.println(the_event);
+      if (my_paths.isEmpty())
+      {
+        g.moveTo(the_event.getX(), the_event.getY());
+        my_paths.push(g);
+      }
+      else if (the_event.getClickCount() == 2)
+      {
+        g.closePath();
+        my_archive.add(my_paths);
+        g = new GeneralPath();
+        repaint();
+      }
+      else
+      {
+        my_paths.peek().lineTo(the_event.getX(), the_event.getY());
+        repaint();
+      }
+      /**if (g2.getCurrentPoint() == null)
+      {
+        g2 = new GeneralPath();
+        g = (GeneralPath) g2.clone();
+        g2.moveTo(the_event.getX(), the_event.getY());
+        my_paths.push(g);
+      }
+      else if (the_event.getClickCount() == 2)
+      {
+        g.closePath();
+        my_archive.add(my_paths);
+        g2 = new GeneralPath();
+        repaint();
+      }
+      else
+      {
+        g = (GeneralPath) g2.clone();
+        g2.lineTo(the_event.getX(), the_event.getY());
+        repaint();
+      }*/
+    }
+  }
+}

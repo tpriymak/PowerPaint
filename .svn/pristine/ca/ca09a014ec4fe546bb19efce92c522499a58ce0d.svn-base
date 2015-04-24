@@ -1,0 +1,52 @@
+
+package drawingpanel;
+
+import java.awt.geom.GeneralPath;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+/**
+ * 
+ * @author Timur
+ * @version 11/20
+ *Stores the previous shapes.
+ */
+public class ShapeArchive
+{
+  /**
+   * List of stacks of GeneralPaths.
+   */
+  private final Stack<Stack<GeneralPath>> my_shapes;
+  /**
+   * Constructs a new ShapeArchive.
+   */
+  public ShapeArchive()
+  {
+    my_shapes = new Stack<Stack<GeneralPath>>();
+  }
+  /**
+   * Adds a shape to the stack.
+   * @param the_g The shape
+   */
+  public void add(final Stack<GeneralPath> the_g)
+  {
+    my_shapes.add(the_g);
+  }
+  /**
+   * Returns the shape at the index.
+   * @param the_index Index of the list.
+   * @return my_shapes.get(the_index)
+   */
+  public Stack<GeneralPath> get()
+  {
+    //return my_shapes.get(the_index);
+    return my_shapes.peek();
+  }
+  /**
+   * @return my_shapes.size();
+   */
+  public int getSize()
+  {
+    return my_shapes.size();
+  }
+}

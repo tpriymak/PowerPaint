@@ -1,0 +1,56 @@
+
+package tools;
+
+import java.awt.event.MouseEvent;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D.Float;
+import java.util.Stack;
+
+import drawingpanel.DrawingPanel;
+import drawingpanel.ShapeArchive;
+/**
+ * 
+ * @author Timur
+ * @version 11/20
+ *Instructions to draw line.
+ */
+public class LineTool extends AbstractToolAction
+{
+  /**
+   * A DrawingPanel object.
+   */
+  private final DrawingPanel my_panel = new DrawingPanel();
+  /**
+   * A Stack of GeneralPaths.
+   */
+  private final Stack<GeneralPath> my_paths = new Stack<GeneralPath>();
+  /**
+   * Archive of shapes.
+   */
+  private ShapeArchive my_archive = new ShapeArchive();
+  /**
+   * @param the_event A mouse press Adds 1 to mouse_clicks every time the mouse
+   *          is clicked and clears the original my_paths.
+   */
+  @Override
+  public void mousePressed(final MouseEvent the_event)
+  {
+    final GeneralPath g = new GeneralPath();
+    g.moveTo(the_event.getX(), the_event.getY());
+    DrawingPanel.my_paths.push(g);
+  }
+  public void mouseDragged(final MouseEvent the_event)
+  {
+    //DrawingPanel.my_paths.pop();
+    //((Float) DrawingPanel.my_paths.peek()).lineTo(the_event.getX(), the_event.getY());
+  }
+  /**
+   * Detects a released mouse.
+   * @param the_event Mouse release
+   */
+  @Override
+  public void mouseReleased(final MouseEvent the_event)
+  {
+    ((Float) DrawingPanel.my_paths.peek()).lineTo(the_event.getX(), the_event.getY());
+  }
+}

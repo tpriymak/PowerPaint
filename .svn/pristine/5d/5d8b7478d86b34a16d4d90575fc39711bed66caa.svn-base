@@ -1,0 +1,27 @@
+package tools;
+
+import java.awt.event.ActionEvent;
+import main.PaintSetup;
+
+import javax.swing.AbstractAction;
+
+import drawingpanel.DrawingPanel;
+
+public class AbstractTool extends AbstractAction
+{
+  PaintSetup setup = new PaintSetup();
+  DrawingPanel panel = setup.getPanel();
+  private class AbstractToolAction
+  {
+    public void actionPerformed(ActionEvent e)
+    {
+      //panel.setTool(this);
+    }
+  }
+  @Override
+  public void actionPerformed(ActionEvent e)
+  {
+    // TODO Auto-generated method stub
+  }
+
+}

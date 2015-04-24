@@ -1,0 +1,77 @@
+
+package tools;
+
+import java.awt.event.MouseEvent;
+
+import drawingpanel.DrawingPanel;
+import drawingpanel.PointArchive;
+
+/**
+ * 
+ * @author Timur
+ * @version 11/20
+ */
+public class RectangleTool extends AbstractToolAction
+{
+  /**
+   * Array length.
+   */
+  private static final int LENGTH = 4;
+  /**
+   * 
+   */
+  private int[] my_points = new int[LENGTH];
+  /**
+   * 
+   */
+  private PointArchive my_archive = new PointArchive();
+  /**
+   * Detects a mouse press.
+   * @param the_event Mouse press
+   */
+  public void mousePressed(final MouseEvent the_event)
+  {
+    my_x = the_event.getX();
+    my_y = the_event.getY();
+    my_points[0] = my_x;
+    my_points[1] = my_y;
+  }
+
+  /**
+     * Detects a mouse release.
+     * @param the_event Mouse release
+     */
+  public void mouseReleased(final MouseEvent the_event)
+  {
+    if (the_event.getX() - my_points[0] < 0 && the_event.getY() - my_points[1] < 0)
+    {
+      my_points[0] = the_event.getX();
+      my_points[1] = the_event.getY();
+      my_points[2] = my_x - the_event.getX();
+      my_points[LENGTH - 1] = my_y - the_event.getY();
+    }
+    else if (the_event.getX() - my_points[0] < 0)
+    {
+      my_points[0] = the_event.getX();
+      my_points[2] = my_x - the_event.getX();
+      my_points[LENGTH - 1] = the_event.getY() - my_points[1];
+    }
+    else if (the_event.getY() - my_points[1] < 0)
+    {
+      my_points[1] = the_event.getY();
+      my_points[2] = the_event.getX() - my_points[0];
+      my_points[LENGTH - 1] = my_y - the_event.getY();
+    }
+
+    else
+    {
+      my_points[2] = the_event.getX() - my_points[0];
+      my_points[LENGTH - 1] = the_event.getY() - my_points[1];
+    }
+    //my_archive.add(my_points);
+    DrawingPanel.my_point_archive = my_archive;
+    my_panel.setRectArray(my_points);
+    my_panel.repaint();
+  }
+
+}

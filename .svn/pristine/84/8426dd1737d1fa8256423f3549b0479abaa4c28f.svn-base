@@ -1,0 +1,89 @@
+package tools;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D.Float;
+import java.util.Stack;
+
+
+import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JToggleButton;
+
+import drawingpanel.DrawingPanel;
+import drawingpanel.ShapeArchive;
+
+public class Pencil extends AbstractTool
+{
+  private Action my_pencil = new PencilAction();
+  private final JToggleButton pencilBar;
+  private final JRadioButtonMenuItem pencilMenu;
+  private final ShapeArchive my_archive = new ShapeArchive();
+  public Pencil()
+  {
+    pencilBar = new JToggleButton(my_pencil);
+    pencilMenu = new JRadioButtonMenuItem(my_pencil);
+  }
+  public AbstractButton setupBarButton()
+  {
+    return pencilBar;
+  }
+  public AbstractButton setupMenuButton()
+  {
+    return pencilMenu;
+  }
+  private class PencilAction extends AbstractAction
+  {  
+    private Stack<GeneralPath> my_paths = new Stack<GeneralPath>();
+    private GeneralPath g = new GeneralPath();
+    public PencilAction()
+    {  
+      super("Pencil", new ImageIcon("pencil_bw.gif"));
+      putValue(Action.MNEMONIC_KEY, KeyEvent.VK_P);
+      putValue(Action.SELECTED_KEY, false);
+    }
+
+    //@Override
+    //public void actionPerformed(ActionEvent e)
+    //{
+      //panel.setTool();
+      //private class PencilAction extends MouseMotionAdapter
+      //{
+        
+
+        /**
+         * Responds to a mouse being dragged.
+         * 
+         * @param the_event The mouse event.
+         */
+        //@Override
+        public void mouseDragged(final MouseEvent the_event)
+        {
+          // System.err.println(the_event);
+          if (my_paths.isEmpty())
+          {
+            g.moveTo(the_event.getX(), the_event.getY());
+            my_paths.push(g);
+          }
+          else if (the_event.getClickCount() == 2)
+          {
+            g.closePath();
+            my_archive.add(my_paths);
+            g = new GeneralPath();
+            panel.repaint();
+          }
+          else
+          {
+            my_paths.peek().lineTo(the_event.getX(), the_event.getY());
+            panel.repaint();
+          }
+        }
+      }
+  }
+}

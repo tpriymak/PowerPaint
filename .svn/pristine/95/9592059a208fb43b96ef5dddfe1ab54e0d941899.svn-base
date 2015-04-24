@@ -1,0 +1,55 @@
+
+package tools;
+
+import java.awt.event.MouseEvent;
+import java.awt.geom.GeneralPath;
+import java.util.Stack;
+
+import drawingpanel.DrawingPanel;
+import drawingpanel.ShapeArchive;
+/**
+ * 
+ * @author Timur
+ * @version 11/20
+ * Gives instructions to draw with a pencil.
+ */
+public class PencilTool extends AbstractToolAction
+{
+  /**
+   * GeneralPath.
+   */
+  /**
+   * Stack of GeneralPaths.
+   */
+  private Stack<GeneralPath> my_paths = new Stack<GeneralPath>();
+  /**
+   * Archive of shapes.
+   */
+  private final ShapeArchive my_archive = new ShapeArchive();
+
+  /**
+   * Responds to the mouse being dragged.
+   * @param the_event 
+   */
+  public void mouseDragged(final MouseEvent the_event)
+  {
+    GeneralPath g = new GeneralPath();
+    if (my_paths.isEmpty())
+    {
+      g.moveTo(the_event.getX(), the_event.getY());
+      my_paths.push(g);
+    }
+    else if (my_panel.getClicks() > 0)
+    {
+      my_archive.add(my_paths);
+      my_panel.setArchive(my_archive);
+      my_panel.setClicks();
+      my_panel.setArchive(my_archive);
+      }
+    else
+    {
+      my_paths.peek().lineTo(the_event.getX(), the_event.getY());
+      my_panel.setPath(my_paths);
+    }
+  }
+}

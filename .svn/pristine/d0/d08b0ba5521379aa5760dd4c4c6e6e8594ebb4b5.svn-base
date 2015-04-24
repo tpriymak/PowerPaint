@@ -1,0 +1,115 @@
+
+package tools;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JToggleButton;
+
+import drawingpanel.DrawingPanel;
+
+/**
+ * 
+ * @author Timur Priymak
+ * @version 11/20
+ */
+public class Pencil extends AbstractTool
+{
+  /**
+   * Serial ID.
+   */
+  private static final long serialVersionUID = 1L;
+  /**
+   * New pencil action.
+   */
+  private final Action my_pencil = new PencilAction();
+  /**
+   * Pencil toolbar button.
+   */
+  private final JToggleButton my_pencil_bar;
+  /**
+   * Pencil menu button.
+   */
+  private final JRadioButtonMenuItem my_pencil_menu;
+
+  /**
+   * Adds Actions to the pencil buttons.
+   */
+  public Pencil()
+  {
+    super();
+    my_pencil_bar = new JToggleButton(my_pencil);
+    my_pencil_menu = new JRadioButtonMenuItem(my_pencil);
+  }
+
+  /**
+   * Returns the pencil bar button.
+   * 
+   * @return pencilBar Pencil Bar button.
+   */
+  public AbstractButton setupBarButton()
+  {
+    return my_pencil_bar;
+  }
+
+  /**
+   * Returns the pencil menu button.
+   * 
+   * @return pencilMenu The pencil menu button.
+   */
+  public AbstractButton setupMenuButton()
+  {
+    return my_pencil_menu;
+  }
+
+  /**
+   * 
+   * @author Timur Priymak
+   * @param the_event Button press Attaches the mnemonics to pencil.
+   */
+  @Override
+  public void actionPerformed(final ActionEvent the_event)
+  {
+    // Overrides the actionPerformed
+  }
+
+  /**
+   * 
+   * @author Timur Priymak Syncs buttons together.
+   */
+  private class PencilAction extends AbstractAction
+  {
+    /**
+     * Serial ID.
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Attaches icon to pencil button.
+     */
+    public PencilAction()
+    {
+      super("Pencil", new ImageIcon("pencil_bw.gif"));
+      putValue(Action.MNEMONIC_KEY, KeyEvent.VK_P);
+      putValue(Action.SELECTED_KEY, true);
+    }
+
+    /**
+     * Responds to a mouse being dragged.
+     * 
+     * @param the_event The mouse event.
+     */
+    @Override
+    public void actionPerformed(final ActionEvent the_event)
+    {
+      System.out.println("Action");
+      DrawingPanel.my_tool = new PencilTool();
+    }
+  }
+
+}
